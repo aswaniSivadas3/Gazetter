@@ -1,0 +1,54 @@
+html,body{
+  margin:0px;
+  height: calc(100% - 15px);
+}
+
+
+#map{
+  height: 100%;
+}
+
+#content{
+  height: 100%;
+
+}
+
+
+
+#nav {
+  border: 1dvi;
+  border-color: rgb(43, 31, 112);
+  background: rgb(43, 31, 112);
+  background: linear-gradient(38deg,rgb(255, 255, 255) 48%, rgb(17, 12, 79) 0% ); */
+  width: 20px;
+}
+
+
+#space {
+  padding: 10px;
+}
+
+.left {
+ text-align: left;
+ padding-left: 5px;
+}
+
+.right {
+  text-align: right;
+  padding-right: 5px;
+}
+
+
+
+div.modal-dialog.modal-dialog-centered {
+  justify-content: center;
+}
+
+div.modal-content {
+  align-items: center;
+  width: fit-content;
+  text-align: center;
+}
+
+
+
