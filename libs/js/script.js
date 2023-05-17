@@ -10,10 +10,11 @@ var countryCurrencyCode;
 var countryCurrencySymbol;
 var countryCurrencyName;
 var wikiUrl;
+var map;
 
+//var map = L.map('map').setView([51.505, -0.09], 13);
+var map = L.map('map');
 
-
-var map = L.map('map').setView([51.505, -0.09], 13);
 
 
 
@@ -49,7 +50,104 @@ var baseMaps={
         userLat = position.coords.latitude
         userLng = position.coords.longitude
         //var accuracy = position.coords.accuracy
-
+        $('document').ready(function() {
+    
+            countryLat=userLat;
+            countryLng=userLng
+        
+            $.ajax({
+                url: "libs/php/getCountryCode.php",
+                type: 'GET',
+                dataType: 'json',
+                data: {
+                    lat: String(userLat),
+                    lng: String(userLng)
+                },
+                success: function(result) {
+                console.log(result);
+                    if (result.status.name == "ok") {
+                        userCountry=result.data.countryName;
+                        userCountryCode=result.data.countryCode;
+                    }
+                
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    
+                }
+            }); 
+        
+          
+            $.ajax({
+                url: "libs/php/countryCord.php",
+                type: 'POST',
+                dataType: "json",
+                
+                success: function(result) {
+                    if (result.status.name == "ok") {
+                        for (var i=0; i<result.data.border.features.length; i++) {
+                                    $('#selCountry').append($('<option>', {
+                                        value: result.data.border.features[i].properties.iso_a2,
+                                        text: result.data.border.features[i].properties.name,
+                                        selected:result.data.border.features[i].properties.iso_a2==userCountryCode?true:false
+                                    }));
+                                }
+                            }
+                        //sort options alphabetically
+                        $("#selCountry").html($("#selCountry option").sort(function (a, b) {
+                            return a.text == b.text ? 0 : a.text < b.text ? -1 : 1
+                        }))
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.log(textStatus, errorThrown);
+                    }
+                  });
+            
+        
+            $.ajax({
+                url: "libs/php/countryCord.php",
+                type: 'POST',
+                dataType: 'json',   
+                success: function(result) {
+            
+                    if (map.hasLayer(border)) {
+                        map.removeLayer(border);
+                    }
+                      
+                    let countryArray = [];
+                    let countryOptionTextArray = [];
+                
+                    for (let i = 0; i < result.data.border.features.length; i++) {
+                        if (result.data.border.features[i].properties.iso_a3 === userCountryCode) {
+                            countryArray.push(result.data.border.features[i]);
+                        }
+                    };
+                    for (let i = 0; i < result.data.border.features.length; i++) {
+                        if (result.data.border.features[i].properties.name === userCountry ) {
+                            countryOptionTextArray.push(result.data.border.features[i]);
+                        }
+                    };
+                             
+                    border = L.geoJSON(countryOptionTextArray[0], {
+                                                                    color: 'rgb(43, 31, 112)',
+                                                                    weight: 3,
+                                                                    opacity: 0.75,
+                                                                    zoom:2
+                                                                    }).addTo(map);
+                    let bounds = border.getBounds();
+                        map.flyToBounds(bounds, {
+                        padding: [35, 35], 
+                        duration: 2,
+                        });                          
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                  // your error code
+                  console.log(textStatus, errorThrown);
+                }
+              }); 
+        
+              
+        
+        });
         var latlng = new L.LatLng(userLat, userLng);
         map = map.setView(latlng, 8);
 
@@ -57,109 +155,12 @@ var baseMaps={
     // .bindPopup('A pretty CSS popup.<br> Easily customizable.')
     // .openPopup();;
     L.control.layers(baseMaps).addTo(map);
+   // location.reload();
 
     }
 
 
-$('document').ready(function() {
-    
 
-    countryLat=userLat;
-    countryLng=userLng
-
-    $.ajax({
-        url: "libs/php/getCountryCode.php",
-        type: 'GET',
-        dataType: 'json',
-        data: {
-            lat: String(userLat),
-            lng: String(userLng)
-        },
-        success: function(result) {
-        console.log(result);
-            if (result.status.name == "ok") {
-                userCountry=result.data.countryName;
-                userCountryCode=result.data.countryCode;
-            }
-        
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            
-        }
-    }); 
-
-  
-    $.ajax({
-        url: "libs/php/countryCord.php",
-        type: 'POST',
-        dataType: "json",
-        
-        success: function(result) {
-            if (result.status.name == "ok") {
-                for (var i=0; i<result.data.border.features.length; i++) {
-                            $('#selCountry').append($('<option>', {
-                                value: result.data.border.features[i].properties.iso_a3,
-                                text: result.data.border.features[i].properties.name,
-                                selected:result.data.border.features[i].properties.iso_a3=="GBR"?true:false
-                            }));
-                        }
-                    }
-                //sort options alphabetically
-                $("#selCountry").html($("#selCountry option").sort(function (a, b) {
-                    return a.text == b.text ? 0 : a.text < b.text ? -1 : 1
-                }))
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.log(textStatus, errorThrown);
-            }
-          });
-    
-
-    $.ajax({
-        url: "libs/php/countryCord.php",
-        type: 'POST',
-        dataType: 'json',   
-        success: function(result) {
-    
-            if (map.hasLayer(border)) {
-                map.removeLayer(border);
-            }
-              
-            let countryArray = [];
-            let countryOptionTextArray = [];
-        
-            for (let i = 0; i < result.data.border.features.length; i++) {
-                if (result.data.border.features[i].properties.iso_a3 === userCountryCode) {
-                    countryArray.push(result.data.border.features[i]);
-                }
-            };
-            for (let i = 0; i < result.data.border.features.length; i++) {
-                if (result.data.border.features[i].properties.name === userCountry ) {
-                    countryOptionTextArray.push(result.data.border.features[i]);
-                }
-            };
-                     
-            border = L.geoJSON(countryOptionTextArray[0], {
-                                                            color: 'rgb(43, 31, 112)',
-                                                            weight: 3,
-                                                            opacity: 0.75,
-                                                            zoom:2
-                                                            }).addTo(map);
-            let bounds = border.getBounds();
-                map.flyToBounds(bounds, {
-                padding: [35, 35], 
-                duration: 2,
-                });                          
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-          // your error code
-          console.log(textStatus, errorThrown);
-        }
-      }); 
-
-      
-
-});
 
 $('#selCountry').on('change', function() {
     let selectedCountryCode = $('#selCountry').val();
@@ -489,3 +490,12 @@ wikiEasy = new easyButton('Wiki','&#x1F4D6');
 timeZone = new easyButton('Time','&#x1F570');
 flag = new easyButton('Flag','&#127988');
 
+// window.onload = function() {
+//     if( !localStorage.getItem('firstLoad') )
+//     {
+//       localStorage['firstLoad'] = true;
+//       window.location.reload();
+//     }  
+//     else
+//       localStorage.removeItem('firstLoad');
+//   }
