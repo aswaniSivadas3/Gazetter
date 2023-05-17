@@ -11,7 +11,8 @@ var countryCurrencySymbol;
 var countryCurrencyName;
 var wikiUrl;
 var map;
-
+mapMarker=[];
+//var marker;
 //var map = L.map('map').setView([51.505, -0.09], 13);
 var map = L.map('map');
 
@@ -144,6 +145,8 @@ var baseMaps={
                   console.log(textStatus, errorThrown);
                 }
               }); 
+
+              plotTop10Cities(userCountry);
         
               
         
@@ -151,9 +154,9 @@ var baseMaps={
         var latlng = new L.LatLng(userLat, userLng);
         map = map.setView(latlng, 8);
 
-    L.marker(latlng).addTo(map);
-    // .bindPopup('A pretty CSS popup.<br> Easily customizable.')
-    // .openPopup();;
+    L.marker(latlng).addTo(map)
+    .bindPopup('you are here')
+    .openPopup();;
     L.control.layers(baseMaps).addTo(map);
    // location.reload();
 
@@ -163,9 +166,14 @@ var baseMaps={
 
 
 $('#selCountry').on('change', function() {
+    
+            
+    for(var i = 0; i < mapMarker.length; i++){
+        map.removeLayer(mapMarker[i]);
+    }
+
     let selectedCountryCode = $('#selCountry').val();
     let selectedCountryText= $('#selCountry').find('option:selected').text();
-
 
     $.ajax({
         url: "libs/php/countryCord.php",
@@ -232,6 +240,9 @@ $('#selCountry').on('change', function() {
         }
     });
 
+    
+    plotTop10Cities(selectedCountryText);
+
 });
 
 function easyButton(name, icon) {
@@ -283,8 +294,8 @@ function easyButton(name, icon) {
                         }); 
                         $('#weather-modal').modal('show');
                         break;
-                    case 'Forecast':
 
+                    case 'Forecast':
                     $.ajax({     
                         url: "libs/php/getCountryWeatherForecast.php",
                         type: 'GET',
@@ -476,6 +487,34 @@ function easyButton(name, icon) {
                         }); 
                         $('#flag-modal').modal('show');
                         break;
+
+                        case 'News':
+                            $.ajax({     
+                                url: "libs/php/getNews.php",
+                                type: 'GET',
+                                dataType: 'json',
+                                data: {
+                                    text:encodeURIComponent($('#selCountry').find('option:selected').text())
+                                },
+                                success: function(result) {
+                                    if (result.status.name == "ok") {
+                                        // console.log(result.data[])
+                                        $("#news1").empty().append('<b>1. '+result.data.news[0].title+'</b>');
+                                        $("#news2").empty().append('<b>2. '+result.data.news[1].title+'</b>');
+                                        $("#news3").empty().append('<b>3. '+result.data.news[2].title+'</b>');
+                                        $("#news4").empty().append('<b>4. '+result.data.news[3].title+'</b>');
+                                        $("#news5").empty().append('<b>5. '+result.data.news[4].title+'</b>');
+                                           
+                                                     
+                                    }       
+                                },
+                    
+                            error: function(jqXHR, textStatus, errorThrown) {
+                               
+                            }
+                        }); 
+                        $('#news-modal').modal('show');
+                        break;
                     };
             }
           }
@@ -489,13 +528,62 @@ currencyEasy = new easyButton('Currency', '&#x1F4B1');
 wikiEasy = new easyButton('Wiki','&#x1F4D6');
 timeZone = new easyButton('Time','&#x1F570');
 flag = new easyButton('Flag','&#127988');
+news = new easyButton('News','&#127760');
 
-// window.onload = function() {
-//     if( !localStorage.getItem('firstLoad') )
-//     {
-//       localStorage['firstLoad'] = true;
-//       window.location.reload();
-//     }  
-//     else
-//       localStorage.removeItem('firstLoad');
-//   }
+function plotTop10Cities(countryName)
+{ 
+    
+    $.ajax({
+        url: "libs/php/getCitiesCoordinates.php",
+        type: 'POST',
+        dataType: 'json',   
+        success: function(result) {
+
+            
+            let currentCityArray=[{
+                cityName:null,
+                lat:null,
+                lng:null
+
+            }];
+            let cityArray=[];
+            
+
+            cityArray = result.data;
+            if(countryName===undefined)
+            {
+                countryName=userCountry;
+            }
+
+            for (let i = 0; i < cityArray.data.length; i++) {
+                if (cityArray.data[i].country === countryName) {
+                        
+                    currentCityArray.push([cityName=cityArray.data[i].city,
+                        lat=cityArray.data[i].lat,
+                        lng=cityArray.data[i].lng]);
+                }
+            };
+    
+            for(let i=1; i<=10; i++){
+    
+                // L.marker(cityLatlng).clear();
+                var cityLatlng = new L.LatLng(currentCityArray[i][1], currentCityArray[i][2]);
+                map = map.setView(cityLatlng, 5);
+    
+                 marker=L.circleMarker(cityLatlng);
+                 map.addLayer(marker);
+                 mapMarker.push(marker);
+                 marker.bindPopup(currentCityArray[i][0])
+                .openPopup();
+    
+            };
+                           
+                                 
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          // your error code
+          console.log(textStatus, errorThrown);
+        }
+    }); 
+
+}
