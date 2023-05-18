@@ -12,6 +12,7 @@ var countryCurrencyName;
 var wikiUrl;
 var map;
 mapMarker=[];
+mapMarkerCluster=[];
 //var marker;
 //var map = L.map('map').setView([51.505, -0.09], 13);
 var map = L.map('map');
@@ -170,6 +171,10 @@ $('#selCountry').on('change', function() {
             
     for(var i = 0; i < mapMarker.length; i++){
         map.removeLayer(mapMarker[i]);
+    }
+
+    for(var i = 0; i < mapMarkerCluster.length; i++){
+        map.removeLayer(mapMarkerCluster[i]);
     }
 
     let selectedCountryCode = $('#selCountry').val();
@@ -563,6 +568,7 @@ function plotTop10Cities(countryName)
                         lng=cityArray.data[i].lng]);
                 }
             };
+            var markersCluster=L.markerClusterGroup();
     
             for(let i=1; i<=10; i++){
     
@@ -575,14 +581,15 @@ function plotTop10Cities(countryName)
                  mapMarker.push(marker);
                  marker.bindPopup(currentCityArray[i][0])
                 .openPopup();
-    
+                markersCluster.addLayer(marker);
+        
             };
-                           
-                                 
+            map.addLayer(markersCluster);
+            mapMarkerCluster.push(markersCluster);
+                
         },
         error: function(jqXHR, textStatus, errorThrown) {
-          // your error code
-          console.log(textStatus, errorThrown);
+          
         }
     }); 
 
