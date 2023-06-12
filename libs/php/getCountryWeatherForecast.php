@@ -7,7 +7,7 @@
 
 	$executionStartTime = microtime(true);
 
-	$url='https://api.openweathermap.org/data/3.0/onecall?lat=' . $_REQUEST['lat'] .'&lon=' . $_REQUEST['lon'] .'&appid=96c0a3c94bfdf7e603ca1fb29056736f';
+	$url='https://api.openweathermap.org/data/3.0/onecall?lat=' . $_REQUEST['lat'] .'&lon=' . $_REQUEST['lon'] .'&units=metric' .'&appid=96c0a3c94bfdf7e603ca1fb29056736f';
 
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
