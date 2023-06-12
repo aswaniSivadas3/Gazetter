@@ -52,6 +52,7 @@ div.modal-content {
 
 
 
+
 #pre-load {
   position: absolute;
   top: 0;
@@ -100,7 +101,7 @@ div.modal-content {
 
 .modal-body {
   overflow: hidden;
-  min-height: 350px;
+  min-height: auto;
 }
 
 .fadeOut {
@@ -115,3 +116,7 @@ div.modal-content {
   bottom: 0;
 }
 
+.modalHeaderDiv{
+  justify-content: center;
+  width: 100%;
+}
