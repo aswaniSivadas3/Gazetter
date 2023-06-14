@@ -12,6 +12,7 @@ var countryCurrencyName;
 var wikiUrl;
 var map;
 var cities;
+var airports;
 mapMarker=[];
 mapMarkerCluster=[];
 
@@ -60,8 +61,17 @@ var baseMaps={
                   fillOpacity: 0.5
                 }}).addTo(map);
             
+            airports = L.markerClusterGroup({
+                polygonOptions: {
+                    fillColor: '#fff',
+                    color: '#000',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.5
+                }}).addTo(map);
             var overlays = {
-            "Cities": cities
+            "Cities": cities,
+            "Airports":airports
             };
             
             var layerControl = L.control.layers(baseMaps, overlays).addTo(map);
@@ -80,6 +90,7 @@ var baseMaps={
                     if (result.status.name == "ok") {
                         userCountry=result.data.countryName;
                         userCountryCode=result.data.countryCode;
+                        plotAirports(userCountryCode);
                     }
                 
                 },
@@ -142,7 +153,7 @@ var baseMaps={
                                                                     color: 'rgb(43, 31, 112)',
                                                                     weight: 3,
                                                                     opacity: 0.75,
-                                                                    zoom:5,
+                                                                    //zoom:5,
                                                                     }).addTo(map);
                     
                         
@@ -161,11 +172,10 @@ var baseMaps={
                 }
               }); 
 
-              plotTop10Cities(userCountry);
-        
+              plotTop10Cities(userCountry);               
               
         
-        });
+            });
     //     var latlng = new L.LatLng(userLat, userLng);
     //     map = map.setView(latlng, 8);
 
@@ -222,7 +232,7 @@ $('#selCountry').on('change', function() {
                                                             color: 'rgb(43, 31, 112)',
                                                             weight: 3,
                                                             opacity: 0.75,
-                                                            zoom:5
+                                                            //zoom:5
                                                             }).addTo(map);
                                                             let bounds = border.getBounds();
                                                             map.fitBounds(bounds);
@@ -230,6 +240,7 @@ $('#selCountry').on('change', function() {
                                                             map.flyToBounds(bounds, {
                                                             padding: [35, 35], 
                                                             duration: 2,
+                                                            
                                                             });    
             
                 
@@ -265,6 +276,7 @@ $('#selCountry').on('change', function() {
 
     
     plotTop10Cities(selectedCountryText);
+    plotAirports(selectedCountryCode)
 
 });
 
@@ -477,11 +489,16 @@ function easyButton(name, icon) {
                             },
                             success: function(result) {
                                 if (result.status.name == "ok") {
-                                    // document.getElementById('id01').style.display='block';
-                                    $("#timeZone").empty().append(result.data.timezoneId);
-                                    $("#localTime").empty().append(result.data.time);
+                                    var date = new Date(result.data.time); 
+                                    var riseDate = new Date(result.data.sunrise);
+                                    var setDate = new Date(result.data.sunset);
 
-                                                              
+                                    // document.getElementById('id01').style.display='block';
+                                    $("#date").empty().append(date.toLocaleDateString());
+                                    $("#timeZone").empty().append(result.data.timezoneId);
+                                    $("#localTime").empty().append(date.toLocaleTimeString());
+                                    $("#sunRise").empty().append(riseDate.toLocaleTimeString());
+                                    $("#sunSet").empty().append(setDate.toLocaleTimeString());                          
                                 }       
                             },
                     
@@ -527,11 +544,16 @@ function easyButton(name, icon) {
                                 },
                                 success: function(result) {
                                     if (result.status.name == "ok") {
-                                        $("#news1").empty().append('<b>1. '+result.data.news[0].title+'</b>');
-                                        $("#news2").empty().append('<b>2. '+result.data.news[1].title+'</b>');
-                                        $("#news3").empty().append('<b>3. '+result.data.news[2].title+'</b>');
-                                        $("#news4").empty().append('<b>4. '+result.data.news[3].title+'</b>');
-                                        $("#news5").empty().append('<b>5. '+result.data.news[4].title+'</b>');
+                                        $("#news1img").empty().append('<img class="img-thumbnail" alt="Sorry! Image not available at this time" src='+result.data.news[0].image+'>');
+                                        $("#news1").empty().append('<a href='+result.data.news[0].url+' target="_blank">'+result.data.news[0].title+'</a>');
+                                        $("#news2img").empty().append('<img class="img-thumbnail" alt="Sorry! Image not available at this time" src='+result.data.news[1].image+'>');
+                                        $("#news2").empty().append('<a href='+result.data.news[1].url+' target="_blank">'+result.data.news[1].title+'</a>');
+                                        $("#news3img").empty().append('<img class="img-thumbnail" alt="Sorry! Image not available at this time" src='+result.data.news[2].image+'>');
+                                        $("#news3").empty().append('<a href='+result.data.news[2].url+' target="_blank">'+result.data.news[2].title+'</a>');
+                                        $("#news4img").empty().append('<img class="img-thumbnail" alt="Sorry! Image not available at this time" src='+result.data.news[3].image+'>');
+                                        $("#news4").empty().append('<a href='+result.data.news[3].url+' target="_blank">'+result.data.news[3].title+'</a>');
+                                        $("#news5img").empty().append('<img class="img-thumbnail" alt="Sorry! Image not available at this time" src='+result.data.news[4].image+'>');
+                                        $("#news5").empty().append('<a href='+result.data.news[4].url+' target="_blank">'+result.data.news[4].title+'</a>');
                                         $('.news-load').addClass("fadeOut");   
                                                      
                                     }       
@@ -565,15 +587,12 @@ function plotTop10Cities(countryName)
    
     var redMarker = L.ExtraMarkers.icon({
         
-        shape: 'circle',
-        markerColor: 'cyan',
-        prefix: 'icon',
-        icon: 'libs/css/image/city.png',
-        iconColor: '#fff',
-        iconRotate: 0,
-        extraClasses: '',
-        number: '',
-        svg: true
+        icon: 'fa-city fa-2xl',
+        iconColor:'blue',
+        markerColor: 'green',
+        shape: 'square',
+        prefix: 'fa',
+        //weight:''
       });
       
     $.ajax({
@@ -623,6 +642,57 @@ function plotTop10Cities(countryName)
             };
             //map.addLayer(cities);
             mapMarkerCluster.push(cities);
+                
+        }
+    },
+        error: function(jqXHR, textStatus, errorThrown) {
+          
+        }
+    }); 
+
+}
+
+function plotAirports(countryCode)
+{ 
+    
+    if(countryCode==undefined || countryCode==null)
+    {
+        countryCode=userCountryCode;
+    }
+   
+    var airportIcon = L.ExtraMarkers.icon({
+        icon: 'fa-plane  fa-2xl',
+        iconColor: 'black',
+        markerColor: 'white',
+        shape: 'square',
+        prefix: 'fa'
+      });
+      
+    $.ajax({
+        url: "libs/php/getCountryAirports.php",
+        type: 'GET',
+        dataType: 'json',   
+        data: {
+            countryCode: countryCode
+         },
+        success: function(result) {
+
+            if (result.status.name == "ok") {          
+    
+            for(let i=1; i<result.data.response.length; i++){
+    
+                
+                var airportLatlng = new L.LatLng(result.data.response[i].lat, result.data.response[i].lng);
+                map = map.setView(airportLatlng,5);
+    
+                 L.marker(airportLatlng, {icon:airportIcon}).addTo(airports).bindPopup(result.data.response[i].name);
+                 map.addLayer(airports);
+                 mapMarker.push(L.marker);
+                 
+        
+            };
+            //map.addLayer(cities);
+            mapMarkerCluster.push(airportLatlng);
                 
         }
     },

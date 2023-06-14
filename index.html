@@ -38,7 +38,7 @@
 				  <div class="modal-dialog modal-dialog-centered exchange">
 				  
 					<!-- Modal content-->
-					<div class="modal-content">
+					<div class="modal-content" style="height: 329px;width: 389px;">
 						<div class="p-3 mb-2 bg-info text-white modalHeaderDiv">
 					  		<div class="modal-header m-0"  style="justify-content: center;">
 								<h4 class="modal-title  fw-bold fs-10" id="modalTitle">Currency Data</h4>
@@ -80,7 +80,7 @@
 				  <div class="modal-dialog modal-dialog-centered wiki">
 				  
 					<!-- Modal content-->
-					<div class="modal-content">
+					<div class="modal-content" style="height: 517px;width:519px;">
 					  <div class="p-3 mb-2 bg-info text-white modalHeaderDiv">
 						<div class="modal-header"  style="justify-content: center;">
 							<h4 class="modal-title fw-bold fs-10" id="modalTitle">Wiki Data</h4>
@@ -124,8 +124,29 @@
 							  </div>
 						</div>
 						<div class="modal-body fw-bold fs-6" id="modalContent">
-							<b id="timeZone"></b><br>
-							<b id="localTime"></b>
+							<table class="table table-striped table-hover">
+								<tr>
+									<td>Time Zone</td>
+									<td><b id="timeZone"></b></td>
+								</tr>
+								<tr>
+									<td>Date</td>
+									<td><b id="date"></b></td>
+								</tr>
+								<tr>
+									<td>Current Time</td>
+									<td><b id="localTime"></b></td>
+								</tr>
+								<tr>
+									<td>Sun Rise</td>
+									<td><b id="sunRise"></b></td>
+								</tr>
+								<tr>
+									<td>Sun Set</td>
+									<td><b id="sunSet"></b></td>
+								</tr>
+							</table>
+							
 					  </div>
 					  <div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -141,10 +162,10 @@
 
 			<div class="modal fade" id="weatherModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 				<div class="modal-dialog">
-				  <div class="modal-content">
+				  <div class="modal-content" style="height: 598px;width: 499.99px;" >
 					<div class="p-3 mb-2 bg-info text-white modalHeaderDiv">
 						<div class="modal-header" style="justify-content: center;">
-					  <h1 class="modal-title fw-bold fs-8" id="weatherModalCapital">Modal title</h1>
+					  <h1 class="modal-title fw-bold fs-8" id="weatherModalCapital"></h1>
 					  <!-- <button type="button" class="bg-primary btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
 					</div>
 				    </div>
@@ -235,7 +256,7 @@
 				  <div class="modal-dialog modal-dialog-centered wiki">
 				  
 					<!-- Modal content-->
-					<div class="modal-content">
+					<div class="modal-content"style="height: 517px;width: 544px;">
 					  <div class="p-3 mb-2 bg-info text-white modalHeaderDiv">
 					   <div class="modal-header" style="justify-content: center;">
 						<h4 class="modal-title fw-bold fs-10" id="modalTitle">Flag</h4>
@@ -266,10 +287,10 @@
 			  <!-- modal for news  --> 
 			  
 				<div class="modal fade news" id="news-modal" role="dialog">
-				  <div class="modal-dialog modal-dialog-centered news">
+				  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable news">
 				  
 					<!-- Modal content-->
-					<div class="modal-content">
+					<div class="modal-content"style="height: 802px;width: 500px;">
 					  <div class="p-3 mb-2 bg-info text-white modalHeaderDiv text-center">	
 					    <div class="modal-header"  style="justify-content: center;">
 						<h4 class="modal-title fw-bold fs-10" id="modalTitle">Top 5 News</h4>
@@ -279,20 +300,25 @@
 						<div id="pre-load" class="news-load"></div>
 						<table class="fs-6 table table-striped table-hover">
 							<tr>
+								<td id="news1img"></td>
 								<td id="news1" class="left"></td>
 							</tr> 
-						  <tr>
-							<td id="news2" class="left"></td>
-						  </tr> 
-						  <tr>
-							<td id="news3" class="left"></td>
-						  </tr>
-						  <tr>
-							<td id="news4" class="left"></td>
-						  </tr>
-						  <tr>
-							<td id="news5" class="left"></td>
-						  </tr>
+							<tr>
+								<td id="news2img"></td>
+								<td id="news2" class="left"></td>
+							</tr>
+							<tr>
+								<td id="news3img"></td>
+								<td id="news3" class="left"></td>
+							</tr>
+							<tr>
+								<td id="news4img"></td>
+								<td id="news4" class="left"></td>
+							</tr>
+							<tr>
+								<td id="news5img"></td>
+								<td id="news5" class="left"></td>
+							</tr>
 											  
 					   </table>
 					</div>
@@ -327,7 +353,7 @@
 		<script src="libs/leaflet/leaflet.extra-markers.min.js"></script>
 		<script src="libs/js/jquery-3.7.0.min.js" type="application/javascript"></script>
 		<script type="application/javascript" src="./libs/js/script.js"></script>
-		
+		<script src="https://kit.fontawesome.com/47da51b985.js" crossorigin="anonymous"></script>
 
 
 

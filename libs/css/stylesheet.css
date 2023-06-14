@@ -120,3 +120,9 @@ div.modal-content {
   justify-content: center;
   width: 100%;
 }
+
+.leftImage{
+  max-width: 5%;
+  height: 30px;
+  
+}
