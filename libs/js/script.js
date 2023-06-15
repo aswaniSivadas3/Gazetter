@@ -592,7 +592,7 @@ news = new easyButton('News','&#127760');
 
 function plotTop10Cities(countryName)
 { 
-    map.removeLayer(cities);
+    
    
     var redMarker = L.ExtraMarkers.icon({
         
@@ -663,7 +663,6 @@ function plotTop10Cities(countryName)
 
 function plotAirports(countryCode)
 { 
-    map.removeLayer(airports);
     if(countryCode==undefined || countryCode==null)
     {
         countryCode=userCountryCode;
