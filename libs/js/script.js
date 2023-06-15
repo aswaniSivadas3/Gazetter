@@ -1,3 +1,5 @@
+// const { marker } = require("leaflet");
+
 var userLat;
 var userLng;
 var border;
@@ -24,12 +26,12 @@ var OSM= L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World
 
 OSM.addTo(map);
 var OpenTopoMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-	maxZoom: 17,
+	// maxZoom: 17,
 	attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
 });
 
 var OPNVKarte = L.tileLayer('https://tileserver.memomaps.de/tilegen/{z}/{x}/{y}.png', {
-	maxZoom: 17,
+	// maxZoom: 17,
 	attribution: 'Map <a href="https://memomaps.de/">memomaps.de</a> <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 });
 
@@ -157,9 +159,8 @@ var baseMaps={
                                                                     }).addTo(map);
                     
                         
-                                                                    let bounds = border.getBounds();
-                                                                    map.fitBounds(bounds);
-                                                                    map.flyToBounds(bounds, {
+                                                                    map.fitBounds(border.getBounds());
+                                                                    map.flyToBounds(border.getBounds(), {
                                                                     padding: [35, 35], 
                                                                     duration: 2,
                                                                     });    
@@ -234,10 +235,9 @@ $('#selCountry').on('change', function() {
                                                             opacity: 0.75,
                                                             //zoom:5
                                                             }).addTo(map);
-                                                            let bounds = border.getBounds();
-                                                            map.fitBounds(bounds);
+                                                            map.fitBounds(border.getBounds());
 
-                                                            map.flyToBounds(bounds, {
+                                                            map.flyToBounds(border.getBounds(), {
                                                             padding: [35, 35], 
                                                             duration: 2,
                                                             
@@ -274,6 +274,7 @@ $('#selCountry').on('change', function() {
         }
     });
 
+    
     
     plotTop10Cities(selectedCountryText);
     plotAirports(selectedCountryCode)
@@ -447,26 +448,35 @@ function easyButton(name, icon) {
                       case 'Wiki':
                        
                         $.ajax({
-                            url: "libs/php/getWikiDetails.php",
+                            url: "libs/php/getWikiWholeDetails.php",
                             type: 'GET',
                             dataType: 'json',
                             data: {
-                                countryName:encodeURIComponent($('#selCountry').find('option:selected').text())
+                                countryCode:$('#selCountry').val()
                             },
                             
                             success: function(result) {
                     
                     
                                 if (result.status.name == "ok") {
-                                    $("#thumbnail").empty().append('<img src='+result.data.thumbnailImg+'>');
-                                    $("#summaryRow").empty().append(result.data.summary);                   
-                                    $("#linkUrl").empty().append('<a href=https://'+result.data.wikipediaUrl+' target="_blank">Click here for more information...</a>');
-                                    $('.wiki-load').addClass("fadeOut");   
-
-
-                                    // $("#divResultSet").empty();
-                                    // $("#divResultSet").append('<br><label> Country Name </label>'+result.data.countryName
-                                    // + '<br><label> Country Code </label>'+result.data.countryCode);
+                                        
+                                     $("#thumbnail1").empty().append('<img src='+result.data[0].thumbnailImg+'>');
+                                     $("#summaryRow1").empty().append(result.data[0].summary); 
+                                     $("#linkUrl1").empty().append('<a href=https://'+result.data[0].wikipediaUrl+' target="_blank">Click here for more information...</a>');
+                                     $("#thumbnail2").empty().append('<img src='+result.data[1].thumbnailImg+'>');
+                                     $("#summaryRow2").empty().append(result.data[1].summary);   
+                                     $("#linkUrl2").empty().append('<a href=https://'+result.data[1].wikipediaUrl+' target="_blank">Click here for more information...</a>');
+                                     $("#thumbnail3").empty().append('<img src='+result.data[2].thumbnailImg+'>');
+                                     $("#summaryRow3").empty().append(result.data[2].summary);   
+                                     $("#linkUrl3").empty().append('<a href=https://'+result.data[2].wikipediaUrl+' target="_blank">Click here for more information...</a>');
+                                     $("#thumbnail4").empty().append('<img src='+result.data[3].thumbnailImg+'>');
+                                     $("#summaryRow4").empty().append(result.data[3].summary);   
+                                     $("#linkUrl4").empty().append('<a href=https://'+result.data[3].wikipediaUrl+' target="_blank">Click here for more information...</a>');
+                                     $("#thumbnail5").empty().append('<img src='+result.data[4].thumbnailImg+'>');
+                                     $("#summaryRow5").empty().append(result.data[4].summary);   
+                                     $("#linkUrl5").empty().append('<a href=https://'+result.data[4].wikipediaUrl+' target="_blank">Click here for more information...</a>');
+                                     $('.wiki-load').addClass("fadeOut");
+                                       
                                     
                                 }
                             
@@ -582,8 +592,7 @@ news = new easyButton('News','&#127760');
 
 function plotTop10Cities(countryName)
 { 
-    
-
+    map.removeLayer(cities);
    
     var redMarker = L.ExtraMarkers.icon({
         
@@ -626,12 +635,12 @@ function plotTop10Cities(countryName)
                 }
             };
             //markersCluster=L.markerClusterGroup();
-    
+            
             for(let i=1; i<=10; i++){
     
                 
                 var cityLatlng = new L.LatLng(currentCityArray[i][1], currentCityArray[i][2]);
-                map = map.setView(cityLatlng,5);
+                map = map.setView(cityLatlng);
     
                  L.marker(cityLatlng, {icon:redMarker}).addTo(cities).bindPopup(currentCityArray[i][0]);
                  map.addLayer(cities);
@@ -654,7 +663,7 @@ function plotTop10Cities(countryName)
 
 function plotAirports(countryCode)
 { 
-    
+    map.removeLayer(airports);
     if(countryCode==undefined || countryCode==null)
     {
         countryCode=userCountryCode;
@@ -683,7 +692,7 @@ function plotAirports(countryCode)
     
                 
                 var airportLatlng = new L.LatLng(result.data.response[i].lat, result.data.response[i].lng);
-                map = map.setView(airportLatlng,5);
+                map = map.setView(airportLatlng);
     
                  L.marker(airportLatlng, {icon:airportIcon}).addTo(airports).bindPopup(result.data.response[i].name);
                  map.addLayer(airports);
