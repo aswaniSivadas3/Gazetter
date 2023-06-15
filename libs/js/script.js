@@ -92,7 +92,10 @@ var baseMaps={
                     if (result.status.name == "ok") {
                         userCountry=result.data.countryName;
                         userCountryCode=result.data.countryCode;
-                        plotAirports(userCountryCode);
+                        setTimeout(function() {
+                            plotAirports(userCountryCode);
+                
+                        }, 1000);
                     }
                 
                 },
@@ -160,10 +163,10 @@ var baseMaps={
                     
                         
                                                                     map.fitBounds(border.getBounds());
-                                                                    map.flyToBounds(border.getBounds(), {
-                                                                    padding: [35, 35], 
-                                                                    duration: 2,
-                                                                    });    
+                                                                    // map.flyToBounds(border.getBounds(), {
+                                                                    // padding: [35, 35], 
+                                                                    // duration: 2,
+                                                                    // });    
                     
                         
                                                 
@@ -194,13 +197,13 @@ var baseMaps={
 $('#selCountry').on('change', function() {
     
    
-    for(var i = 0; i < mapMarker.length; i++){
-        map.removeLayer(mapMarker[i]);
-    }
+    // for(var i = 0; i < mapMarker.length; i++){
+    //     map.removeLayer(mapMarker[i]);
+    // }
 
-    for(var i = 0; i < mapMarkerCluster.length; i++){
-        map.removeLayer(mapMarkerCluster[i]);
-    }
+    // for(var i = 0; i < mapMarkerCluster.length; i++){
+    //     map.removeLayer(mapMarkerCluster[i]);
+    // }
 
     let selectedCountryCode = $('#selCountry').val();
     let selectedCountryText= $('#selCountry').find('option:selected').text();
@@ -237,11 +240,11 @@ $('#selCountry').on('change', function() {
                                                             }).addTo(map);
                                                             map.fitBounds(border.getBounds());
 
-                                                            map.flyToBounds(border.getBounds(), {
-                                                            padding: [35, 35], 
-                                                            duration: 2,
+                                                            // map.flyToBounds(border.getBounds(), {
+                                                            // padding: [35, 35], 
+                                                            // duration: 2,
                                                             
-                                                            });    
+                                                            // });    
             
                 
                                
@@ -687,6 +690,8 @@ function plotAirports(countryCode)
 
             if (result.status.name == "ok") {          
     
+                //let count=result.data.response.length;
+                
             for(let i=1; i<result.data.response.length; i++){
     
                 
@@ -699,8 +704,8 @@ function plotAirports(countryCode)
                  
         
             };
-            //map.addLayer(cities);
-            mapMarkerCluster.push(airportLatlng);
+            
+            mapMarkerCluster.push(airports);
                 
         }
     },
