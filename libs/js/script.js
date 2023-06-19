@@ -142,6 +142,8 @@ var baseMaps={
                       
                     let countryArray = [];
                     let countryOptionTextArray = [];
+
+                    plotTop10Cities(userCountry);
                 
                     for (let i = 0; i < result.data.border.features.length; i++) {
                         if (result.data.border.features[i].properties.iso_a3 === userCountryCode) {
@@ -161,12 +163,12 @@ var baseMaps={
                                                                     //zoom:5,
                                                                     }).addTo(map);
                     
-                        
-                                                                    map.fitBounds(border.getBounds());
                                                                     // map.flyToBounds(border.getBounds(), {
-                                                                    // padding: [35, 35], 
-                                                                    // duration: 2,
-                                                                    // });    
+                                                                    //     padding: [35, 35], 
+                                                                    //     duration: 2,
+                                                                    //     });
+                                                                    map.fitBounds(border.getBounds());
+                                                                        
                     
                         
                                                 
@@ -176,18 +178,11 @@ var baseMaps={
                 }
               }); 
 
-              plotTop10Cities(userCountry);               
+                           
               
         
             });
-    //     var latlng = new L.LatLng(userLat, userLng);
-    //     map = map.setView(latlng, 8);
-
-    // L.marker(latlng).addTo(map)
-    // .bindPopup('you are here')
-    // .openPopup();;
-    // L.control.layers(baseMaps).addTo(map);
-   // location.reload();
+    
 
     }
 
@@ -196,7 +191,8 @@ var baseMaps={
 
 $('#selCountry').on('change', function() {
     
-   
+    map.removeLayer(cities);
+    map.removeLayer(airports);
     // for(var i = 0; i < mapMarker.length; i++){
     //     map.removeLayer(mapMarker[i]);
     // }
@@ -207,6 +203,9 @@ $('#selCountry').on('change', function() {
 
     let selectedCountryCode = $('#selCountry').val();
     let selectedCountryText= $('#selCountry').find('option:selected').text();
+
+    plotTop10Cities(selectedCountryText);
+    plotAirports(selectedCountryCode);
 
     $.ajax({
         url: "libs/php/countryCord.php",
@@ -220,7 +219,7 @@ $('#selCountry').on('change', function() {
               
             let countryArray = [];
             let countryOptionTextArray = [];
-        
+       
             for (let i = 0; i < result.data.border.features.length; i++) {
                 if (result.data.border.features[i].properties.iso_a3 === selectedCountryCode) {
                     countryArray.push(result.data.border.features[i]);
@@ -279,8 +278,7 @@ $('#selCountry').on('change', function() {
 
     
     
-    plotTop10Cities(selectedCountryText);
-    plotAirports(selectedCountryCode)
+    
 
 });
 
@@ -643,7 +641,7 @@ function plotTop10Cities(countryName)
     
                 
                 var cityLatlng = new L.LatLng(currentCityArray[i][1], currentCityArray[i][2]);
-                map = map.setView(cityLatlng);
+                // map = map.setView(cityLatlng);
     
                  L.marker(cityLatlng, {icon:redMarker}).addTo(cities).bindPopup(currentCityArray[i][0]);
                  map.addLayer(cities);
@@ -652,8 +650,8 @@ function plotTop10Cities(countryName)
                  //cities.addLayer(L.marker);
         
             };
-            //map.addLayer(cities);
-            mapMarkerCluster.push(cities);
+            // map.addLayer(cities);
+        //    mapMarkerCluster.push(cities);
                 
         }
     },
@@ -666,6 +664,7 @@ function plotTop10Cities(countryName)
 
 function plotAirports(countryCode)
 { 
+    // map.removeLayer(airports);
     if(countryCode==undefined || countryCode==null)
     {
         countryCode=userCountryCode;
@@ -696,16 +695,16 @@ function plotAirports(countryCode)
     
                 
                 var airportLatlng = new L.LatLng(result.data.response[i].lat, result.data.response[i].lng);
-                map = map.setView(airportLatlng);
+                // map = map.setView(airportLatlng);
     
                  L.marker(airportLatlng, {icon:airportIcon}).addTo(airports).bindPopup(result.data.response[i].name);
                  map.addLayer(airports);
-                 mapMarker.push(L.marker);
+                //  mapMarker.push(L.marker);
                  
         
             };
             
-            mapMarkerCluster.push(airports);
+        //    mapMarkerCluster.push(airports);
                 
         }
     },
